@@ -1,16 +1,18 @@
+# using code from https://github.com/ArturSpirin/pyPS4Controller
+# changed controller to thread
 import os
 import struct
 import time
+import threading
 
-
-class Actions:
+class Actions(threading.Thread):
     """
     Actions are inherited in the Controller class.
     In order to bind to the controller events, subclass the Controller class and
     override desired action events in this class.
     """
     def __init__(self):
-        return
+        threading.Thread.__init__(self)
 
     def on_x_press(self):
         print("on_x_press")
@@ -197,6 +199,9 @@ class Controller(Actions):
 
         self.event_size = struct.calcsize(self.event_format)
         self.event_history = []
+
+    def run(self):
+        self.listen()
 
     def listen(self, timeout=30, on_connect=None, on_disconnect=None, on_sequence=None):
         """
